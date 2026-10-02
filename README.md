@@ -3,6 +3,12 @@
 > استودیوی ساده و محلی برای مرتب کردن متن‌های فارسی با Markdown
 
 ---
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![RTL](https://img.shields.io/badge/RTL-Persian-orange.svg)](#)
+[![Local](https://img.shields.io/badge/Local--First-Offline-brightgreen.svg)](#)
+
 
 ### یه درد مشترک...
 

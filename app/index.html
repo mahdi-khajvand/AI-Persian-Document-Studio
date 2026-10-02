@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Persian AI Document Studio · استودیو اسناد فارسی</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" title="Persian AI Document Studio"><span>✦</span></div>
+    <div>
+      <b>Persian AI Document Studio</b>
+      <span>استودیو اسناد فارسی · جدول · کد · فرمول · قالب</span>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button id="templatesBtn" class="tpl-btn" type="button">✦ قالب‌ها</button>
+    <button id="newBtn" class="ghost" type="button">سند جدید</button>
+    <button id="saveBtn" class="ghost" type="button">ذخیره</button>
+    <button id="exportPdf" class="primary" type="button">PDF چاپ</button>
+    <button id="exportDocx" class="accent" type="button">Word</button>
+  </div>
+</header>
+
+<div class="workspace">
+<aside class="sidebar left">
+  <div class="panel-head"><b>ابزار سند</b><span id="saveState" class="pill">ذخیره خودکار</span></div>
+  <div class="tool-grid">
+    <button data-action="h1" type="button" title="عنوان اصلی">عنوان</button>
+    <button data-action="h2" type="button" title="زیرعنوان">زیرعنوان</button>
+    <button data-action="bold" type="button" title="متن پررنگ (Bold)">پررنگ</button>
+    <button data-action="italic" type="button" title="متن مورب (Italic)">مورب</button>
+    <button data-action="quote" type="button" title="نقل‌قول">نقل‌قول</button>
+    <button data-action="code" type="button" title="بلوک کد Python">کد</button>
+    <button data-action="table" type="button" title="درج جدول نمونه">جدول</button>
+    <button data-action="math" type="button" title="فرمول ریاضی بلوکی $$">فرمول</button>
+    <button data-action="mathi" type="button" title="فرمول خطی $">فرمول خطی</button>
+    <button data-action="hr" type="button" title="خط جداکننده">جداکننده</button>
+  </div>
+  <div class="section">
+    <label>فهرست سند</label>
+    <div id="outline" class="outline"></div>
+  </div>
+  <div class="section">
+    <label>جستجو و جایگزینی</label>
+    <input id="find" placeholder="جستجو…">
+    <input id="replace" placeholder="جایگزینی با…">
+    <div class="row">
+      <button id="findBtn" type="button">یافتن</button>
+      <button id="replaceBtn" type="button">جایگزینی</button>
+    </div>
+  </div>
+  <div class="section">
+    <label>تنظیمات نمایش</label>
+    <div class="setting"><span>فونت</span>
+      <select id="fontSelect">
+        <option value="Vazir">وزیر</option>
+        <option value="IRANYekan">ایران‌یکان</option>
+        <option value="FarMitra">فارمیترا</option>
+      </select>
+    </div>
+    <div class="setting"><span>اندازه</span><input id="fontSize" type="range" min="14" max="24" value="18"></div>
+    <div class="setting"><span>فاصله خطوط</span><input id="lineHeight" type="range" min="1.4" max="2.4" step="0.1" value="1.9"></div>
+  </div>
+  <div class="section">
+    <button id="settingsBtn" class="wide" type="button">تنظیمات AI و برنامه</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="tabs">
+    <button class="tab active" data-tab="source" type="button">متن / Markdown</button>
+    <button class="tab" data-tab="preview" type="button">پیش‌نمایش</button>
+    <button class="tab" data-tab="split" type="button">دو پنجره</button>
+    <span class="doc-title" contenteditable="true" id="docTitle">سند بدون عنوان</span>
+  </div>
+  <div id="editorWrap" class="editor-wrap">
+    <textarea id="editor" spellcheck="false" dir="auto" placeholder="متن فارسی، Markdown یا خروجی ChatGPT را اینجا وارد کنید…
+
+از دکمه «قالب‌ها» برای نامه اداری، دستورالعمل IT و سایر قالب‌های شرکت توزیع استفاده کنید."></textarea>
+    <div id="preview" class="preview" dir="rtl"></div>
+  </div>
+  <div class="statusbar">
+    <span id="wordCount">۰ کلمه</span>
+    <span id="charCount">۰ نویسه</span>
+    <span id="cursorPos">سطر ۱، ستون ۱</span>
+    <span class="spacer"></span>
+    <span>UTF-8 · RTL · قالب‌ها</span>
+  </div>
+</main>
+
+<aside class="sidebar right">
+  <div class="ai-head">
+    <div class="ai-orb">✦</div>
+    <div>
+      <b>دستیار هوش مصنوعی</b>
+      <span>ویرایش، خلاصه، ترجمه و تولید</span>
+    </div>
+  </div>
+  <div class="ai-presets">
+    <button data-ai="این متن را از نظر نگارشی ویرایش کن و لحن حرفه‌ای فارسی بده. ساختار Markdown، جداول و بلوک‌های کد را حفظ کن." type="button">نگارشی</button>
+    <button data-ai="این متن را خلاصه کن و نکات کلیدی را به‌صورت بولت ارائه بده." type="button">خلاصه</button>
+    <button data-ai="این متن را به فارسی رسمی و اداری بازنویسی کن." type="button">اداری</button>
+    <button data-ai="این متن را ساختاریافته و خواناتر کن. تیترها، جدول و کد را نگه دار." type="button">ساختار</button>
+  </div>
+  <textarea id="aiPrompt" placeholder="دستور خود را بنویسید…"></textarea>
+  <div class="ai-row">
+    <select id="provider">
+      <option value="ollama">Ollama</option>
+      <option value="lmstudio">LM Studio</option>
+      <option value="openai">OpenAI-compatible</option>
+    </select>
+    <input id="model" placeholder="مدل" value="qwen3">
+  </div>
+  <button id="aiRun" class="ai-run" type="button">اجرای هوش مصنوعی</button>
+  <div class="section">
+    <label>دستورات آماده</label>
+    <div id="history" class="history"><div class="empty">هنوز عملیاتی انجام نشده است.</div></div>
+  </div>
+</aside>
+</div>
+</div>
+
+<!-- Templates Modal -->
+<div id="templatesModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card tpl-modal">
+    <div class="modal-head">
+      <div>
+        <b>قالب‌های شرکت توزیع</b>
+        <span class="modal-sub">انتخاب قالب · پر کردن فیلدها · تولید با AI یا اعمال روی متن</span>
+      </div>
+      <button id="closeTemplates" class="icon-close" type="button" aria-label="بستن">×</button>
+    </div>
+
+    <div class="tpl-layout">
+      <!-- detail first in DOM → in RTL appears on the RIGHT (wide form area) -->
+      <div class="tpl-detail">
+        <div class="tpl-detail-head">
+          <div class="tpl-icon" id="tplIcon">📄</div>
+          <div>
+            <h3 id="tplName">یک قالب را انتخاب کنید</h3>
+            <p id="tplDesc" class="tpl-desc">قالب‌های آماده برای مکاتبات و اسناد داخلی شرکت توزیع</p>
+          </div>
+        </div>
+
+        <div class="tpl-fields" id="tplFields"></div>
+
+        <div class="tpl-actions">
+          <button id="tplApplySkeleton" class="ghost" type="button">اعمال اسکلت قالب</button>
+          <button id="tplAdaptText" class="ghost" type="button">متن فعلی را با این قالب اصلاح کن</button>
+          <button id="tplGenerate" class="primary" type="button">✦ تولید سند با AI</button>
+        </div>
+      </div>
+      <!-- list second → in RTL on the LEFT (compact colorful names) -->
+      <div class="tpl-list-wrap">
+        <div class="tpl-list" id="tplList"></div>
+        <button id="tplAddNew" class="tpl-add-btn" type="button">＋ افزودن قالب جدید</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><b>تنظیمات</b><button id="closeSettings" class="icon-close" type="button">×</button></div>
+    <div class="form-grid">
+      <label>Base URL<input id="baseUrl" placeholder="http://localhost:11434"></label>
+      <label>API Key<input id="apiKey" type="password" placeholder="اختیاری"></label>
+      <label>مدل پیش‌فرض<input id="defaultModel" placeholder="qwen3"></label>
+      <label>حالت تاریک
+        <select id="theme">
+          <option value="light">روشن</option>
+          <option value="dark">تیره</option>
+          <option value="auto">سیستم</option>
+        </select>
+      </label>
+    </div>
+    <p class="hint">برای Ollama معمولاً آدرس <code>http://localhost:11434</code> است. کلید API فقط در مرورگر شما نگهداری می‌شود.</p>
+    <button id="saveSettings" class="primary wide" type="button">ذخیره تنظیمات</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

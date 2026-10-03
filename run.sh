@@ -3,7 +3,9 @@ set -e
 
 cd "$(dirname "$0")"
 
-PYTHON="/media/mahdi/Data/data-lake/venv/bin/python"
+
+# python path
+PYTHON="***/python"
 
 if [ ! -x "$PYTHON" ]; then
     echo "Python executable not found:"
